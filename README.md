@@ -1,4 +1,4 @@
-# SHL Assessment Recommendation System
+# Intelligent (SHL) Assessment Recommendation System
 
 This project is an AI-powered recommendation system built to suggest the most relevant SHL assessments based on user queries, job descriptions, or unstructured input data. It combines NLP techniques and Large Language Models (LLMs) to provide accurate, efficient, and context-aware results through an intuitive frontend interface.
 
