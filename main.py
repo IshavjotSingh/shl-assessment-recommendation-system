@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from typing import List
 import pandas as pd
@@ -23,7 +24,7 @@ def startup_event():
     global model, gemini_model, catalog_df, corpus, corpus_embeddings
 
     load_dotenv()
-    api_key = os.getenv("GEMINI_API_KEY")
+    api_key = os.getenv("GOOGLE_API_KEY")
 
     print("🚀 Loading models and data...")
 
@@ -32,7 +33,7 @@ def startup_event():
 
     # Load Gemini
     genai.configure(api_key=api_key)
-    gemini_model = genai.GenerativeModel("gemini-1.5-pro")
+    gemini_model = genai.GenerativeModel("gemini-2.5-flash")
 
     # Load and process catalog data
     catalog_df = pd.read_csv("SHL_catalog.csv")
@@ -58,6 +59,10 @@ def startup_event():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+    
+@app.get("/", include_in_schema=False)
+def root():
+    return RedirectResponse(url="/docs")
 
 # Request body
 class QueryRequest(BaseModel):

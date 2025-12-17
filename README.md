@@ -1,67 +1,221 @@
-# Intelligent (SHL) Assessment Recommendation System
+                            🧠 SHL Assessment Recommendation System (GenAI Task)
 
-This project is an AI-powered recommendation system built to suggest the most relevant SHL assessments based on user queries, job descriptions, or unstructured input data. It combines NLP techniques and Large Language Models (LLMs) to provide accurate, efficient, and context-aware results through an intuitive frontend interface.
+This project is an AI-powered Assessment Recommendation System built as part of the SHL GenAI Take-Home Assessment.
+It helps hiring managers and recruiters find the most relevant SHL individual test solutions based on a natural language query, job description text, or URL.
 
-Try it out @ https://shlassessmentrecommendationsystem.streamlit.app [Example Test Cases given below]
+The system combines:
+Web scraping
+Semantic search (Sentence-BERT)
+LLM-based query understanding (Gemini)
+Evaluation using Recall@K
+REST API (FastAPI)
+Interactive UI (Streamlit)
 
-## Features
+🚀 Key Features
+Crawls and stores SHL Product Catalogue (Individual Test Solutions only)
+Converts catalogue into semantic embeddings
+Uses GenAI (Gemini) for intelligent query understanding
+Returns 5–10 relevant assessments
+Provides:
+REST API
+Web UI
+Supports evaluation using labelled train data
+Generates predictions for unlabelled test set
 
-- Recommends SHL assessments based on:
-  - Job descriptions
-  - Unstructured URLs or text input
-  - Custom user queries
-- NLP-based semantic similarity matching using Sentence-BERT
-- Contextual feature extraction and filtering using Gemini 1.5 Pro (LLM)
-- Ranking and scoring using cosine similarity
-- Top recommendations output with relevance filtering
-- Streamlit-based frontend for an interactive user experience
 
-## Tech Stack
+                                        Project Architecture
 
-- **Natural Language Processing**:
-  - Sentence-BERT for creating embeddings of assessments and queries
-  - Cosine similarity for ranking the most relevant assessments
-- **LLM Integration**:
-  - Gemini 1.5 Pro used to extract structured features (job title, skills, duration, etc.) from unstructured input
-  - Post-processing and filtering of recommendations based on constraints like duration and skill match
-- **Frontend**:
-  - Streamlit application for user-friendly interaction and display of results
+Intelligent_Assessment_Recommendation_System/
+│
+├── src/
+│   ├── ingestion.py                  # Scrape SHL catalogue
+│   ├── preprocessing.py              # Clean & prepare data
+│   ├── embeddings.py                 # Build Sentence-BERT embeddings
+│   ├── recommender.py                # Core recommendation logic
+│   ├── data_loader.py                # Load train/test datasets
+│   ├── evaluate.py                   # Mean Recall@K evaluation
+│   ├── generate_test_predictions.py  # Generate test-set predictions
+│   ├── api.py / main.py               # FastAPI backend
+│
+├── app.py                             # Streamlit frontend
+├── query_functions.py                 # LLM + retrieval pipeline
+│
+├── data/
+│   ├── raw/                           # Scraped catalogue
+│   ├── processed/                     # Cleaned data + embeddings
+│   ├── train/                         # Train-set (xlsx)
+│   ├── test/                          # Test-set (xlsx)
+│   └── outputs/                       # Predictions CSV
+│
+├── evaluation/                        # Evaluation artifacts
+├── notebooks/                         # Experiments & exploration
+│
+├── requirements.txt
+├── .env                               # API keys (not committed)
+└── README.md
 
-## How It Works
 
-1. **Data Preparation**:
-   - A mock dataset of 50 SHL-like assessments is used, each containing:
-     - Assessment name, URL, duration, test type, skills, description, remote support, and adaptive/IRT support.
-   - A "combined" column is created by concatenating all columns into a single string for embedding.
+Environment Setup
+1️⃣ Create Virtual Environment
+python -m venv venv
+venv\Scripts\activate
 
-2. **NLP Embedding and Retrieval**:
-   - Sentence-BERT is used to convert both dataset entries and input queries into vector embeddings.
-   - Cosine similarity is calculated to identify the top matching assessments.
 
-3. **LLM Enhancement (Gemini 1.5 Pro)**:
-   - Accepts job descriptions, URLs, or unstructured queries.
-   - Extracts meaningful structured features like job role, required skills, expected duration, etc.
-   - This information is used to generate more accurate embeddings.
-   - After retrieving top candidates, Gemini re-filters based on constraints and relevance.
+2️⃣ Install Dependencies
+pip install -r requirements.txt
 
-4. **Evaluation**:
-   - Performance is evaluated using metrics such as Recall@5 and MAP@5.
-   - The hybrid (NLP + LLM) approach outperforms the pure NLP baseline in both metrics.
+3️⃣ Set Gemini API Key
+GOOGLE_API_KEY=your_gemini_api_key_here
 
-5. **Streamlit Interface**:
-   - Users can input queries directly in a web interface.
-   - Receives and displays the top recommended assessments along with their details.
+Step 1: Scrape SHL Product Catalogue
+Scrapes Individual Test Solutions and filters out Pre-packaged Job Solutions.
+python src/ingestion.py
 
-## Performance
-- NLP Model - Recall@5 = 0.85 and MAP@5 = 0.71
-- NLP + LLM Model - Recall@5 = 1.0 and MAP@5 = 1.0
-  
-## Test Cases 
-- I am hiring for Java developers who can also collaborate effectively with my business teams. Looking
-for an assessment(s) that can be completed in 40 minutes.
-- Looking to hire mid-level professionals who are proficient in Python, SQL and Java Script. Need an
-assessment package that can test all skills with max duration of 60 minutes.
-- I am hiring for an analyst and wants applications to screen using Cognitive and personality tests,
-what options are available within 45 mins.
-- https://www.linkedin.com/jobs/view/research-engineer-ai-at-shl-4194768899/?originalSubdomain=in
-- Want to assess communication and teamwork skills in under 30 minutes.
+Output:
+data/raw/shl_catalog_raw.csv
+data/raw/shl_catalog_filtered_out.csv
+
+✔️ Meets requirement of crawling SHL catalogue
+✔️ Uses Playwright to handle dynamic React UI
+
+Step 2: Preprocess Catalogue
+python src/preprocessing.py
+Output:
+data/processed/shl_catalog_clean.csv
+
+Cleans columns
+Builds combined text for embeddings
+
+🔎 Step 3: Build Embeddings
+python src/embeddings.py
+Output:
+data/processed/shl_embeddings.pkl
+
+Uses Sentence-BERT (all-MiniLM-L6-v2)
+Creates vector representations for semantic search
+
+🤖 Step 4: Recommendation Pipeline
+The recommendation logic:
+User query → LLM (Gemini) → structured intent
+Intent → semantic similarity search
+Top-K assessments returned
+
+Implemented in:
+
+src/recommender.py
+query_functions.py
+
+📊 Step 5: Evaluation (Mean Recall@10)
+python src/evaluate.py
+
+
+Metric:
+
+Mean Recall@10 on labelled train set
+⚠️ Note: Due to small labelled data and catalogue drift, recall may be low.
+The evaluation pipeline is implemented correctly as required.
+
+🧪 Step 6: Generate Test Predictions
+python src/generate_test_predictions.py
+
+Output:
+data/outputs/test_predictions.csv
+
+Format:
+
+Query,Assessment_url
+Query 1,https://www.shl.com/...
+Query 1,https://www.shl.com/...
+...
+✔️ Matches Appendix-3 submission format
+
+🌐 FastAPI Backend
+Run API
+uvicorn main:app --reload
+
+Endpoints
+Health Check
+GET /health
+
+
+Response:
+
+{ "status": "healthy" }
+
+Recommendation
+POST /recommend
+
+
+Request:
+
+{ "query": "Need a Java developer with collaboration skills" }
+
+
+Response:
+
+{
+  "recommended_assessments": [
+    {
+      "assessment_name": "...",
+      "url": "...",
+      "adaptive_support": "...",
+      "description": "...",
+      "duration": 40,
+      "remote_support": "Yes",
+      "test_type": ["Knowledge & Skills"],
+      "skills": ["Java"]
+    }
+  ]
+}
+
+
+API Docs:
+
+http://127.0.0.1:8000/docs
+
+🖥️ Streamlit Frontend
+
+Run UI:
+
+streamlit run app.py
+
+
+Features:
+
+Text input for queries
+
+Clickable assessment links
+
+Tabular output
+
+📈 Technology Stack
+
+Python
+
+FastAPI
+
+Streamlit
+
+Sentence-Transformers
+
+Google Gemini API
+
+Playwright
+
+Pandas / NumPy
+
+PyTorch
+
+✅ Submission Checklist
+
+✔️ Scraped SHL catalogue
+✔️ API endpoint live
+✔️ Web UI available
+✔️ Evaluation implemented
+✔️ Test predictions CSV generated
+✔️ Code pushed to GitHub
+
+                                                      👤 Author
+
+                                                      Ishavjot Singh
+                                                      GenAI / Data Engineering Enthusiast

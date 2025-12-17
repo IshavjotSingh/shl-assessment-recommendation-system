@@ -1,0 +1,13 @@
+id,catalog_type,assessment_name,url,remote_testing_support,adaptive_irt,test_type_keys,test_type
+4302,type_1_individual,Global Skills Development Report,https://www.shl.com/products/product-catalog/view/global-skills-development-report/,Yes,No,"A, E, B, C, D, P","Ability & Aptitude, Assessment Exercises, Biodata & Situational Judgement, Competencies, Development & 360, Personality & Behavior"
+3827,type_1_individual,.NET Framework 4.5,https://www.shl.com/products/product-catalog/view/net-framework-4-5/,Yes,Yes,K,Knowledge & Skills
+4094,type_1_individual,.NET MVC (New),https://www.shl.com/products/product-catalog/view/net-mvc-new/,Yes,No,K,Knowledge & Skills
+4099,type_1_individual,.NET MVVM (New),https://www.shl.com/products/product-catalog/view/net-mvvm-new/,Yes,No,K,Knowledge & Skills
+4018,type_1_individual,.NET WCF (New),https://www.shl.com/products/product-catalog/view/net-wcf-new/,Yes,No,K,Knowledge & Skills
+4016,type_1_individual,.NET WPF (New),https://www.shl.com/products/product-catalog/view/net-wpf-new/,Yes,No,K,Knowledge & Skills
+4165,type_1_individual,.NET XAML (New),https://www.shl.com/products/product-catalog/view/net-xaml-new/,Yes,No,K,Knowledge & Skills
+4178,type_1_individual,Accounts Payable (New),https://www.shl.com/products/product-catalog/view/accounts-payable-new/,Yes,No,K,Knowledge & Skills
+4187,type_1_individual,Accounts Payable Simulation (New),https://www.shl.com/products/product-catalog/view/accounts-payable-simulation-new/,Yes,No,S,Simulations
+4179,type_1_individual,Accounts Receivable (New),https://www.shl.com/products/product-catalog/view/accounts-receivable-new/,Yes,No,K,Knowledge & Skills
+4188,type_1_individual,Accounts Receivable Simulation (New),https://www.shl.com/products/product-catalog/view/accounts-receivable-simulation-new/,Yes,No,S,Simulations
+4168,type_1_individual,ADO.NET (New),https://www.shl.com/products/product-catalog/view/ado-net-new/,Yes,No,K,Knowledge & Skills

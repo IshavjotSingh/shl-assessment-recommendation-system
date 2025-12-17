@@ -1,0 +1,13 @@
+id,catalog_type,assessment_name,url,remote,adaptive,test_type_keys,test_type,combined_text
+4302,type_1_individual,Global Skills Development Report,https://www.shl.com/products/product-catalog/view/global-skills-development-report/,Yes,No,"A, E, B, C, D, P","Ability & Aptitude, Assessment Exercises, Biodata & Situational Judgement, Competencies, Development & 360, Personality & Behavior","Global Skills Development Report Ability & Aptitude, Assessment Exercises, Biodata & Situational Judgement, Competencies, Development & 360, Personality & Behavior Yes No"
+3827,type_1_individual,.NET Framework 4.5,https://www.shl.com/products/product-catalog/view/net-framework-4-5/,Yes,Yes,K,Knowledge & Skills,.NET Framework 4.5 Knowledge & Skills Yes Yes
+4094,type_1_individual,.NET MVC (New),https://www.shl.com/products/product-catalog/view/net-mvc-new/,Yes,No,K,Knowledge & Skills,.NET MVC (New) Knowledge & Skills Yes No
+4099,type_1_individual,.NET MVVM (New),https://www.shl.com/products/product-catalog/view/net-mvvm-new/,Yes,No,K,Knowledge & Skills,.NET MVVM (New) Knowledge & Skills Yes No
+4018,type_1_individual,.NET WCF (New),https://www.shl.com/products/product-catalog/view/net-wcf-new/,Yes,No,K,Knowledge & Skills,.NET WCF (New) Knowledge & Skills Yes No
+4016,type_1_individual,.NET WPF (New),https://www.shl.com/products/product-catalog/view/net-wpf-new/,Yes,No,K,Knowledge & Skills,.NET WPF (New) Knowledge & Skills Yes No
+4165,type_1_individual,.NET XAML (New),https://www.shl.com/products/product-catalog/view/net-xaml-new/,Yes,No,K,Knowledge & Skills,.NET XAML (New) Knowledge & Skills Yes No
+4178,type_1_individual,Accounts Payable (New),https://www.shl.com/products/product-catalog/view/accounts-payable-new/,Yes,No,K,Knowledge & Skills,Accounts Payable (New) Knowledge & Skills Yes No
+4187,type_1_individual,Accounts Payable Simulation (New),https://www.shl.com/products/product-catalog/view/accounts-payable-simulation-new/,Yes,No,S,Simulations,Accounts Payable Simulation (New) Simulations Yes No
+4179,type_1_individual,Accounts Receivable (New),https://www.shl.com/products/product-catalog/view/accounts-receivable-new/,Yes,No,K,Knowledge & Skills,Accounts Receivable (New) Knowledge & Skills Yes No
+4188,type_1_individual,Accounts Receivable Simulation (New),https://www.shl.com/products/product-catalog/view/accounts-receivable-simulation-new/,Yes,No,S,Simulations,Accounts Receivable Simulation (New) Simulations Yes No
+4168,type_1_individual,ADO.NET (New),https://www.shl.com/products/product-catalog/view/ado-net-new/,Yes,No,K,Knowledge & Skills,ADO.NET (New) Knowledge & Skills Yes No

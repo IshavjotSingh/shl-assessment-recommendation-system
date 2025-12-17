@@ -1,9 +1,22 @@
-# Ignore Python cache files
+# Python
 __pycache__/
-*.py[cod]
+*.pyc
+*.pyo
+*.pyd
 
-# Ignore environment files
+# Virtual environment
+venv/
 .env
 
-# Ignore macOS system files
+# Data artifacts
+data/playwright_profile/
+data/raw/*.png
+data/raw/*.html
+data/processed/*.pkl
+
+# Notebooks output
+.ipynb_checkpoints/
+
+# OS
 .DS_Store
+Thumbs.db

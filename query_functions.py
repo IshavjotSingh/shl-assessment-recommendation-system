@@ -47,12 +47,12 @@ def extract_text_from_url(url):
         return f"Error:{e}"
 
 load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")
+api_key = os.getenv("GOOGLE_API_KEY")
 
 
 genai.configure(api_key=api_key)
 
-gemini_model = genai.GenerativeModel("gemini-1.5-pro")
+gemini_model = genai.GenerativeModel("gemini-2.5-flash")
 
 def extract_features_with_llm(user_query):
     prompt = f"""
