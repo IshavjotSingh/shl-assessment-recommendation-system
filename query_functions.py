@@ -21,7 +21,7 @@ corpus_embeddings = model.encode(corpus, convert_to_tensor=True)
 # ---------------- LLM SETUP ----------------
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-gemini_model = genai.GenerativeModel("gemini-2.0-flash")
+gemini_model = genai.GenerativeModel("gemini-1.5-flash")
 
 # ---------------- HELPERS ----------------
 def extract_features_with_llm(user_query: str) -> str:

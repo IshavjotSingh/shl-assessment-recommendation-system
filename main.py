@@ -34,7 +34,7 @@ def startup_event():
 
     # Load Gemini
     genai.configure(api_key=api_key)
-    gemini_model = genai.GenerativeModel("gemini-2.5-flash")
+    gemini_model = genai.GenerativeModel("gemini-1.5-flash")
 
     # Load and process catalog data
     catalog_df = pd.read_csv("SHL_catalog.csv")
