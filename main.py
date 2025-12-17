@@ -15,9 +15,10 @@ app = FastAPI()
 # Global objects to be initialized on startup
 model = None
 gemini_model = None
-catalog_df = None
-corpus = None
-corpus_embeddings = None
+catalog_df = pd.read_csv("data/processed/shl_catalog_clean.csv")
+corpus = catalog_df["combined_text"].tolist()
+corpus_embeddings = model.encode(corpus, convert_to_tensor=True)
+
 
 @app.on_event("startup")
 def startup_event():
