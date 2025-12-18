@@ -15,9 +15,9 @@ app = FastAPI()
 # Global objects to be initialized on startup
 model = None
 gemini_model = None
-catalog_df = pd.read_csv("data/processed/shl_catalog_clean.csv")
-corpus = catalog_df["combined_text"].tolist()
-corpus_embeddings = model.encode(corpus, convert_to_tensor=True)
+catalog_df = None
+corpus = None
+corpus_embeddings = None
 
 
 @app.on_event("startup")
@@ -29,7 +29,7 @@ def startup_event():
 
     print("🚀 Loading models and data...")
 
-    # Load Sentence Transformer model
+    # Load Sentence Transformer model FIRST
     model = SentenceTransformer('all-MiniLM-L6-v2')
 
     # Load Gemini
@@ -37,22 +37,51 @@ def startup_event():
     gemini_model = genai.GenerativeModel("gemini-2.5-flash")
 
     # Load and process catalog data
-    catalog_df = pd.read_csv("SHL_catalog.csv")
+    # Use the processed catalog (check which file exists)
+    catalog_path = "data/processed/shl_catalog_clean.csv"
+    if not os.path.exists(catalog_path):
+        # Fallback to old format if processed doesn't exist
+        catalog_path = "SHL_catalog.csv"
+    
+    catalog_df = pd.read_csv(catalog_path)
 
-    def combine_row(row):
-        parts = [
-            str(row["Assessment Name"]),
-            str(row["Duration"]),
-            str(row["Remote Testing Support"]),
-            str(row["Adaptive/IRT"]),
-            str(row["Test Type"]),
-            str(row["Skills"]),
-            str(row["Description"]),
-        ]
-        return ' '.join(parts)
+    # Check which columns exist and create combined text accordingly
+    if "combined_text" in catalog_df.columns:
+        # Already has combined_text
+        corpus = catalog_df["combined_text"].tolist()
+    else:
+        # Need to create combined text from individual columns
+        def combine_row(row):
+            parts = []
+            if "Assessment Name" in catalog_df.columns:
+                parts.append(str(row.get("Assessment Name", "")))
+            elif "assessment_name" in catalog_df.columns:
+                parts.append(str(row.get("assessment_name", "")))
+            
+            if "Duration" in catalog_df.columns:
+                parts.append(str(row.get("Duration", "")))
+            if "Remote Testing Support" in catalog_df.columns:
+                parts.append(str(row.get("Remote Testing Support", "")))
+            elif "remote_testing_support" in catalog_df.columns:
+                parts.append(str(row.get("remote_testing_support", "")))
+            if "Adaptive/IRT" in catalog_df.columns:
+                parts.append(str(row.get("Adaptive/IRT", "")))
+            elif "adaptive_irt" in catalog_df.columns:
+                parts.append(str(row.get("adaptive_irt", "")))
+            if "Test Type" in catalog_df.columns:
+                parts.append(str(row.get("Test Type", "")))
+            elif "test_type" in catalog_df.columns:
+                parts.append(str(row.get("test_type", "")))
+            if "Skills" in catalog_df.columns:
+                parts.append(str(row.get("Skills", "")))
+            if "Description" in catalog_df.columns:
+                parts.append(str(row.get("Description", "")))
+            return ' '.join(parts)
 
-    catalog_df['combined'] = catalog_df.apply(combine_row, axis=1)
-    corpus = catalog_df['combined'].tolist()
+        catalog_df['combined'] = catalog_df.apply(combine_row, axis=1)
+        corpus = catalog_df['combined'].tolist()
+
+    # Now create embeddings AFTER model is loaded
     corpus_embeddings = model.encode(corpus, convert_to_tensor=True)
 
     print("✅ Startup complete.")
@@ -61,9 +90,21 @@ def startup_event():
 def health_check():
     return {"status": "healthy"}
     
-@app.get("/", include_in_schema=False)
+@app.get("/")
 def root():
     return RedirectResponse(url="/docs")
+
+@app.get("/info")
+def info():
+    return {
+        "message": "SHL Assessment Recommendation API",
+        "status": "running",
+        "endpoints": {
+            "health": "/health",
+            "recommend": "/recommend (POST)",
+            "docs": "/docs"
+        }
+    }
 
 # Request body
 class QueryRequest(BaseModel):
@@ -85,6 +126,9 @@ class RecommendationResponse(BaseModel):
 
 @app.post("/recommend", response_model=RecommendationResponse)
 def recommend_assessments(request: QueryRequest):
+    if model is None or catalog_df is None or corpus_embeddings is None:
+        raise HTTPException(status_code=503, detail="Service not ready. Models still loading.")
+    
     try:
         df: pd.DataFrame = query_handling_using_LLM_updated(
             request.query,
@@ -101,15 +145,25 @@ def recommend_assessments(request: QueryRequest):
         results = []
 
         for _, row in df.iterrows():
+            # Handle both old and new column names
+            assessment_name = row.get("Assessment Name") or row.get("assessment_name", "")
+            url = row.get("URL") or row.get("url", "")
+            adaptive = row.get("Adaptive/IRT") or row.get("adaptive_irt", "")
+            description = row.get("Description") or row.get("description", "")
+            duration = row.get("Duration") or row.get("duration", 0)
+            remote = row.get("Remote Testing Support") or row.get("remote_testing_support", "")
+            test_type = row.get("Test Type") or row.get("test_type", "")
+            skills = row.get("Skills") or row.get("skills", "")
+            
             results.append({
-                "assessment_name": row["Assessment Name"],
-                "url": row["URL"],
-                "adaptive_support": row["Adaptive/IRT"],
-                "description": row["Description"],
-                "duration": int(row["Duration"]),
-                "remote_support": row["Remote Testing Support"],
-                "test_type": row["Test Type"] if isinstance(row["Test Type"], list) else [row["Test Type"]],
-                "skills": row["Skills"] if isinstance(row["Skills"], list) else [skill.strip() for skill in str(row["Skills"]).split(",")]
+                "assessment_name": assessment_name,
+                "url": url,
+                "adaptive_support": adaptive,
+                "description": description,
+                "duration": int(duration) if duration else 0,
+                "remote_support": remote,
+                "test_type": test_type if isinstance(test_type, list) else [test_type] if test_type else [],
+                "skills": skills if isinstance(skills, list) else [skill.strip() for skill in str(skills).split(",")] if skills else []
             })
 
         return {"recommended_assessments": results}
